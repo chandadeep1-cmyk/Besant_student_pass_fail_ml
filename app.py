@@ -22,21 +22,33 @@ hours = st.number_input(
 )
 
 # Predict when the button is clicked
+
 if st.button("Predict Result"):
 
-    prediction = model.predict([[hours]])[0]
+    # Get probabilities for both classes
     probability = model.predict_proba([[hours]])[0]
 
-    if prediction == 1:
+    # Probability of Pass (class 1)
+    pass_probability = probability[1]
+
+    # Decision threshold
+    threshold = 0.5
+
+    # Apply threshold to decide Pass or Fail
+    if pass_probability >= threshold:
         st.success("Prediction: Pass")
+        predicted_confidence = pass_probability
     else:
         st.error("Prediction: Fail")
+        predicted_confidence = probability[0]
 
-    print_probability = round(max(probability) * 100, 2)
-
+    # Display probabilities and threshold
+    st.write(f"Pass probability: {pass_probability * 100:.2f}%")
+    st.write(f"Fail probability: {probability[0] * 100:.2f}%")
+    st.write(f"Decision threshold: {threshold * 100:.0f}%")
     st.write(
-        f"Model confidence in its predicted class: "
-        f"{print_probability}%"
+        f"Probability of predicted class: "
+        f"{predicted_confidence * 100:.2f}%"
     )
 
 st.caption(
